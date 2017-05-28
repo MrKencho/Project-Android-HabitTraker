@@ -41,17 +41,22 @@ public class MainActivity extends AppCompatActivity {
             Log.e("MainActivity:","Error while adding habit");
     }
 
-    //Reading the habits
-    private void readHabit(){
+    //Reading habits
+    private Cursor readDb(){
         SQLiteDatabase db = mDbHelper.getReadableDatabase();
-        TextView displayView = (TextView) findViewById(R.id.habit);
-        displayView.setText(R.string.displayHeading);
-
         String[] projection = {
                 COLUMN_HABIT_NAME, COLUMN_AGE
         };
 
-        Cursor cursor = db.query(TABLE_NAME,projection,null,null,null,null,null);
+        return db.query(TABLE_NAME,projection,null,null,null,null,null);
+    }
+
+    //Displays data from database
+    private void readHabit(){
+        TextView displayView = (TextView) findViewById(R.id.habit);
+        displayView.setText(R.string.displayHeading);
+
+        Cursor cursor = readDb();
 
         try {
             int habitNameIndex = cursor.getColumnIndex(COLUMN_HABIT_NAME);
@@ -63,7 +68,7 @@ public class MainActivity extends AppCompatActivity {
                 int currentAge = cursor.getInt(ageInex);
                 String age = Integer.toString(currentAge);
 
-                displayView.append(currentHabitName+" ---- "+age);
+                displayView.append("\n"+currentHabitName+" ---- "+age);
             }
         }
         finally {
